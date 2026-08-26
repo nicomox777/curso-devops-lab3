@@ -1,11 +1,5 @@
 pipeline {
-    agent {
-        docker { 
-            image 'node:20-alpine'
-            // Monta los sockets y binarios para permitir ejecutar Docker y kubectl dentro del contenedor
-            args '-v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/kubectl:/usr/usr/bin/kubectl -v /root/.kube:/root/.kube'
-        }
-    }
+    agent any
 
     environment {
         APP_NAME = "curso-devops-lab3"
