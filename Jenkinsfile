@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'node'
+    }
+
     environment {
         APP_NAME = "curso-devops-lab3"
         SEMANTIC_VERSION = "1.0.0"
@@ -8,7 +12,7 @@ pipeline {
         // REEMPLAZA ESTOS VALORES CON TUS DATOS REALES
         DOCKERHUB_USER = "tu-usuario-dockerhub" 
         GITHUB_USER = "nicomox777"       
-        NAMESPACE = "cmarin" // Cambiar por tu inicial + apellido (Ej: nhernandez)
+        NAMESPACE = "cmarin"
     }
 
     stages {
