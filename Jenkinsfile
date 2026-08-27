@@ -9,10 +9,9 @@ pipeline {
         APP_NAME = "curso-devops-lab3"
         SEMANTIC_VERSION = "1.0.0"
         
-        // Reemplaza estos valores con tus datos reales si varían
-        DOCKERHUB_USER = "tu-usuario-dockerhub" 
+        DOCKERHUB_USER = "nicoudt" 
         GITHUB_USER = "nicomox777"       
-        NAMESPACE = "cmarin"
+        NAMESPACE = "nhernandezs"
     }
 
     stages {
@@ -63,13 +62,13 @@ pipeline {
         stage('e. Construcción Docker Multistage') {
             steps {
                 script {
-                    dockerImage = docker.build("${APP_NAME}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${DOCKERHUB_USER}/${APP_NAME}:${BUILD_NUMBER}")
                 }
             }
         }
 
         // 1.f Upload a Docker Hub
-        stage('f. Upload Docker Hub') {
+       stage('f. Upload Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
