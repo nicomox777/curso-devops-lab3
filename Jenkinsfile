@@ -79,18 +79,15 @@ pipeline {
             }
         }
 
-        // 1.g Upload a GitHub Packages
-        stage('g. Upload GitHub Packages') {
+      stage('g. Upload GitHub Packages') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-credentials-id', usernameVariable: 'GH_USER', passwordVariable: 'GH_PAT')]) {
                         sh '''
-                            echo $GH_PAT | docker login ghcr.io -u $GH_USER --password-stdin
+                            printf "%s" "$GH_PAT" | docker login ghcr.io -u "$GH_USER" --password-stdin
                             docker tag ${DOCKERHUB_USER}/${APP_NAME}:${BUILD_NUMBER} ghcr.io/${GITHUB_USER}/${APP_NAME}:latest
-                            docker tag ${DOCKERHUB_USER}/${APP_NAME}:${BUILD_NUMBER} ghcr.io/${GITHUB_USER}/${APP_NAME}:${SEMANTIC_VERSION}
                             docker tag ${DOCKERHUB_USER}/${APP_NAME}:${BUILD_NUMBER} ghcr.io/${GITHUB_USER}/${APP_NAME}:${BUILD_NUMBER}
                             docker push ghcr.io/${GITHUB_USER}/${APP_NAME}:latest
-                            docker push ghcr.io/${GITHUB_USER}/${APP_NAME}:${SEMANTIC_VERSION}
                             docker push ghcr.io/${GITHUB_USER}/${APP_NAME}:${BUILD_NUMBER}
                         '''
                     }
@@ -101,7 +98,7 @@ pipeline {
         // 1.h Actualizar K8s Local
         stage('h. Actualizar K8s Local') {
             steps {
-                sh 'kubectl apply -f k8s/ --validate=false || echo "Simulacion K8s OK"'
+                sh 'kubectl apply -f k8s/ --validate=false || echo "Despliegue simulado OK"'
             }
         }
     }
