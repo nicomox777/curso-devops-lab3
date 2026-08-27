@@ -31,8 +31,7 @@ pipeline {
         }
 
         // 1.c Envío de cobertura a SonarQube y validación de puerta de calidad
-    // 1.c Envío de cobertura a SonarQube y validación de puerta de calidad
-     stage('c. SonarQube & Quality Gate') {
+        stage('c. SonarQube & Quality Gate') {
             steps {
                 withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv('SonarQubeServer') {
@@ -68,7 +67,7 @@ pipeline {
         }
 
         // 1.f Upload a Docker Hub
-       stage('f. Upload Docker Hub') {
+        stage('f. Upload Docker Hub') {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
@@ -81,7 +80,7 @@ pipeline {
         }
 
         // 1.g Upload a GitHub Packages
-     stage('g. Upload GitHub Packages') {
+        stage('g. Upload GitHub Packages') {
             steps {
                 script {
                     def imageUser = GITHUB_USER.toLowerCase()
@@ -96,8 +95,8 @@ pipeline {
                 }
             }
         }
+
         // 1.h Actualización de imagen de Kubernetes local
-       // 1.h Actualizar K8s Local
         stage('h. Actualizar K8s Local') {
             steps {
                 sh '''
@@ -105,4 +104,5 @@ pipeline {
                 '''
             }
         }
+    }
 }
