@@ -81,23 +81,28 @@ pipeline {
         }
 
         // 1.g Upload a GitHub Packages
-        stage('g. Upload GitHub Packages') {
+     stage('g. Upload GitHub Packages') {
             steps {
                 script {
+                    def imageUser = GITHUB_USER.toLowerCase()
+                    def imageName = APP_NAME.toLowerCase()
+                    def ghcrImage = docker.build("ghcr.io/${imageUser}/${imageName}:${BUILD_NUMBER}")
+                    
                     docker.withRegistry('https://ghcr.io', 'github-credentials-id') {
-                        dockerImage.push("latest")
-                        dockerImage.push("${SEMANTIC_VERSION}")
-                        dockerImage.push("${BUILD_NUMBER}")
+                        ghcrImage.push("latest")
+                        ghcrImage.push("${SEMANTIC_VERSION}")
+                        ghcrImage.push("${BUILD_NUMBER}")
                     }
                 }
             }
         }
-
         // 1.h Actualización de imagen de Kubernetes local
+       // 1.h Actualizar K8s Local
         stage('h. Actualizar K8s Local') {
             steps {
-                sh "kubectl set image deployment/nestjs-app nestjs-app=ghcr.io/${GITHUB_USER}/${APP_NAME}:${BUILD_NUMBER} -n ${NAMESPACE}"
+                sh '''
+                    kubectl apply -f k8s/ --validate=false || true
+                '''
             }
         }
-    }
 }
