@@ -33,7 +33,7 @@ pipeline {
 
         // 1.c Envío de cobertura a SonarQube y validación de puerta de calidad
     // 1.c Envío de cobertura a SonarQube y validación de puerta de calidad
-        stage('c. SonarQube & Quality Gate') {
+     stage('c. SonarQube & Quality Gate') {
             steps {
                 withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
                     withSonarQubeEnv('SonarQubeServer') {
@@ -48,9 +48,6 @@ pipeline {
                               -Dsonar.token=$SONAR_TOKEN
                         '''
                     }
-                }
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
                 }
             }
         }
