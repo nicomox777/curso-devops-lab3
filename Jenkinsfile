@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'node'
+    }
+
     environment {
         APP_NAME = "curso-devops-lab3"
         SEMANTIC_VERSION = "1.0.0"
