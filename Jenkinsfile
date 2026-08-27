@@ -9,7 +9,7 @@ pipeline {
         APP_NAME = "curso-devops-lab3"
         SEMANTIC_VERSION = "1.0.0"
         
-        // REEMPLAZA ESTOS VALORES CON TUS DATOS REALES
+        // Reemplaza estos valores con tus datos reales si varían
         DOCKERHUB_USER = "tu-usuario-dockerhub" 
         GITHUB_USER = "nicomox777"       
         NAMESPACE = "cmarin"
@@ -23,7 +23,7 @@ pipeline {
             }
         }
 
-        // 1.b Ejecución de pruebas
+        // 1.b Ejecución de pruebas y generación de cobertura
         stage('b. Ejecución de pruebas') {
             steps {
                 sh 'npm run test'
@@ -35,7 +35,15 @@ pipeline {
         stage('c. SonarQube & Quality Gate') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
-                    sh 'npx sonar-scanner'
+                    sh '''
+                        npx sonar-scanner \
+                          -Dsonar.projectKey=curso-devops-lab3 \
+                          -Dsonar.projectName=curso-devops-lab3 \
+                          -Dsonar.sources=src \
+                          -Dsonar.tests=src \
+                          -Dsonar.test.inclusions=**/*.spec.ts \
+                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                    '''
                 }
                 timeout(time: 5, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
@@ -50,7 +58,7 @@ pipeline {
             }
         }
 
-        // 1.e Construcción de imagen docker multistage (liviana)
+        // 1.e Construcción de imagen docker multistage
         stage('e. Construcción Docker Multistage') {
             steps {
                 script {
@@ -59,7 +67,7 @@ pipeline {
             }
         }
 
-        // 1.f Upload a Docker Hub (latest, versión semántica, build number)
+        // 1.f Upload a Docker Hub
         stage('f. Upload Docker Hub') {
             steps {
                 script {
@@ -72,7 +80,7 @@ pipeline {
             }
         }
 
-        // 1.g Upload a GitHub Packages (latest, versión semántica, build number)
+        // 1.g Upload a GitHub Packages
         stage('g. Upload GitHub Packages') {
             steps {
                 script {
@@ -85,7 +93,7 @@ pipeline {
             }
         }
 
-        // 1.h Actualización de imagen de Kubernetes local usando build number
+        // 1.h Actualización de imagen de Kubernetes local
         stage('h. Actualizar K8s Local') {
             steps {
                 sh "kubectl set image deployment/nestjs-app nestjs-app=ghcr.io/${GITHUB_USER}/${APP_NAME}:${BUILD_NUMBER} -n ${NAMESPACE}"
