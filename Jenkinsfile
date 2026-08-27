@@ -32,7 +32,7 @@ pipeline {
         }
 
         // 1.c Envío de cobertura a SonarQube y validación de puerta de calidad
-        stage('c. SonarQube & Quality Gate') {
+   stage('c. SonarQube & Quality Gate') {
             steps {
                 withSonarQubeEnv('SonarQubeServer') {
                     sh '''
@@ -42,7 +42,8 @@ pipeline {
                           -Dsonar.sources=src \
                           -Dsonar.tests=src \
                           -Dsonar.test.inclusions=**/*.spec.ts \
-                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+                          -Dsonar.token=$SONAR_AUTH_TOKEN
                     '''
                 }
                 timeout(time: 5, unit: 'MINUTES') {
